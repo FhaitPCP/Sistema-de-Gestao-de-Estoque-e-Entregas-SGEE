@@ -1,0 +1,81 @@
+@startuml
+autonumber
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
+skinparam maxMessageSize 150
+
+actor "Colaborador" as Colab
+participant "Aplicação Cliente\n(Front-end Node.js)" as Front
+
+box "API Gateway & Segurança" #LightCyan
+    participant "GatewayFilter\n(Spring Security)" as GatewayAuth
+end box
+
+box "Microsserviço de Estoque (Spring Boot)" #LightYellow
+    participant "EstoqueController" as Controller
+    participant "EstoqueService" as Service
+    participant "Produto : Entidade" as Entidade
+    participant "EstoqueRepository" as Repository
+end box
+
+database "Base de Dados\nEstoque (SQL)" as DB
+
+== Fluxo: Registar Saída de Produtos (UC-06) ==
+
+Colab -> Front: Preenche e submete formulário (idProduto, quantidade)
+activate Front
+
+Front -> GatewayAuth: POST /api/estoque/saida\nHeader: Bearer Token JWT
+activate GatewayAuth
+
+note over GatewayAuth: Valida a assinatura do token e verifica se o utilizador tem a permissão (Role) de Colaborador
+GatewayAuth -> GatewayAuth: extrairUsuarioId(token)
+
+GatewayAuth -> Controller: Roteamento Interno (idUsuario, idProduto, quantidade)
+deactivate GatewayAuth
+activate Controller
+
+Controller -> Service: registarSaida(idUsuario, idProduto, quantidade)
+activate Service
+
+note over Service: O Service orquestra a lógica transacional
+Service -> Repository: findById(idProduto)
+activate Repository
+Repository -> DB: SELECT * FROM produtos WHERE id = ?
+activate DB
+DB --> Repository: Registo do Produto
+deactivate DB
+Repository --> Service: Objeto Produto
+deactivate Repository
+
+Service -> Entidade: validarDisponibilidade(quantidade)
+activate Entidade
+Entidade --> Service: boolean (true)
+deactivate Entidade
+
+Service -> Entidade: debitarEstoque(quantidade)
+activate Entidade
+Entidade --> Service: Saldo atualizado (em memória)
+deactivate Entidade
+
+Service -> Service: criarRegistroMovimentacao(idUsuario, TIPO_SAIDA)
+
+Service -> Repository: save(produtoAtualizado, novaMovimentacao)
+activate Repository
+Repository -> DB: BEGIN TRANSACTION\nUPDATE produtos...\nINSERT INTO movimentacoes...\nCOMMIT
+activate DB
+DB --> Repository: Sucesso (Linhas afetadas)
+deactivate DB
+Repository --> Service: Confirmação de persistência
+deactivate Repository
+
+Service --> Controller: EstoqueResponseDTO (status: SUCESSO, novoSaldo)
+deactivate Service
+
+Controller --> Front: HTTP 200 OK (JSON)
+deactivate Controller
+
+Front --> Colab: Apresenta notificação de sucesso no ecrã
+deactivate Front
+
+@enduml

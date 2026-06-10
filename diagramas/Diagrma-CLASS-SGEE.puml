@@ -1,0 +1,112 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 60
+
+package "API Gateway & Segurança (Spring Security)" {
+    class AuthController {
+        + login(request: LoginRequest): ResponseEntity<TokenJWT>
+    }
+    
+    class TokenService {
+        + gerarToken(usuario: UsuarioPrincipal): TokenJWT
+        + validarToken(token: String): String
+    }
+    
+    class UsuarioPrincipal {
+        - idUsuario: UUID
+        - username: String
+        - email: String
+        - permissões: List<String>
+        + possuiAcesso(role: String): Boolean
+    }
+    
+    class TokenJWT {
+        - token: String
+        - tipo: String
+        - dataExpiracao: LocalDateTime
+    }
+
+    AuthController ..> TokenService : utiliza
+    TokenService ..> TokenJWT : gera
+    TokenService ..> UsuarioPrincipal : extrai dados
+}
+
+package "Microsserviço de Estoque" {
+    class Produto {
+        - idProduto: UUID
+        - nome: String
+        - quantidadeAtual: Integer
+        - quantidadeMinima: Integer
+        - precoCusto: BigDecimal
+        - precoVenda: BigDecimal
+        + validarDisponibilidade(qtd: Integer): Boolean
+        + debitarEstoque(qtd: Integer): void
+        + creditarEstoque(qtd: Integer): void
+    }
+    
+    class Movimentacao {
+        - idMovimentacao: UUID
+        - idProduto: UUID
+        - tipo: TipoMovimentacao
+        - quantidade: Integer
+        - dataHora: LocalDateTime
+        - idUsuarioResponsavel: UUID
+        + registrar(): void
+    }
+    
+    Movimentacao "0..*" -> "1" Produto : opera sobre
+}
+
+package "Microsserviço de Faturamento" {
+    class NotaFiscal {
+        - idNota: UUID
+        - chaveAcesso: String
+        - dataEmissao: LocalDateTime
+        - valorTotal: BigDecimal
+        - totalImpostos: BigDecimal
+        + calcularImpostos(): BigDecimal
+        + emitir(): void
+    }
+
+    class ItemNota {
+        - idItem: UUID
+        - idProduto: UUID
+        - quantidade: Integer
+        - precoUnitario: BigDecimal
+        - subtotal: BigDecimal
+    }
+
+    NotaFiscal "1" *-- "1..*" ItemNota : contem
+}
+
+package "Microsserviço de Entregas" {
+    class Entrega {
+        - idEntrega: UUID
+        - idNotaFiscal: UUID
+        - idEntregador: UUID
+        - dataAgendada: LocalDateTime
+        - status: StatusEntrega
+        - enderecoDestino: String
+        + atribuirEntregador(idEntregador: UUID): void
+        + atualizarStatus(novoStatus: StatusEntrega): void
+    }
+
+    class Comprovante {
+        - idComprovante: UUID
+        - dataHora: LocalDateTime
+        - urlImagem: String
+        - assinaturaDigital: String
+    }
+
+    Entrega "1" *-- "0..1" Comprovante : possui
+}
+
+' Relacionamentos Explicitos de Desacoplamento (Referências por ID / Comunicação via Eventos)
+Movimentacao ..> UsuarioPrincipal : "vincula idUsuarioResponsavel obtido do token"
+ItemNota ..> Produto : "vincula idProduto (Verificação via API/Mensageria)"
+Entrega ..> NotaFiscal : "vincula idNotaFiscal (Gatilho pós-faturamento)"
+Entrega ..> UsuarioPrincipal : "vincula idEntregador (Filtro por Role)"
+
+@enduml

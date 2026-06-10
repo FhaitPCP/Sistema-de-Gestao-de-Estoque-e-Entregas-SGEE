@@ -1,0 +1,26 @@
+@startuml
+skinparam state {
+  BackgroundColor White
+  BorderColor Black
+}
+
+[*] --> PENDENTE : Faturação Concluída
+
+PENDENTE --> AGENDADA : Colaborador agenda (UC-09)
+AGENDADA --> EM_TRANSITO : Entregador inicia rota
+
+EM_TRANSITO --> ENTREGUE : Sucesso na entrega (UC-10)
+EM_TRANSITO --> TENTATIVA_FALHADA : Cliente ausente / Erro
+
+TENTATIVA_FALHADA --> AGENDADA : Reagendar entrega
+TENTATIVA_FALHADA --> DEVOLVIDA : Limite de tentativas / Recusa (UC-15)
+
+ENTREGUE --> [*]
+DEVOLVIDA --> [*]
+
+note right of TENTATIVA_FALHADA
+  O sistema bloqueia a transição direta 
+  de TENTATIVA_FALHADA para ENTREGUE.
+  É obrigatório reagendar (AGENDADA) primeiro.
+end note
+@enduml

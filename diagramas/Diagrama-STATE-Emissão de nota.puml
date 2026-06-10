@@ -1,0 +1,21 @@
+@startuml
+skinparam state {
+  BackgroundColor White
+  BorderColor Black
+}
+
+[*] --> EM_PROCESSAMENTO : Solicitação de Emissão (UC-08)
+
+EM_PROCESSAMENTO --> REJEITADA : Erro no cálculo de impostos ou dados
+EM_PROCESSAMENTO --> EMITIDA : Validação (UC-13) e geração de chave
+
+EMITIDA --> CANCELADA : Administrador revoga (UC-03)
+EMITIDA --> [*] : Operação Finalizada
+REJEITADA --> [*]
+CANCELADA --> [*]
+
+note left of EM_PROCESSAMENTO
+  Estado temporário (microsserviço de faturação
+  processa impostos síncronamente).
+end note
+@enduml

@@ -1,0 +1,73 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Usuário Genérico" as User
+actor "Administrador" as Admin
+actor "Colaborador" as Colab
+actor "Entregador" as Entreg
+
+' Herança de Atores (Generalização)
+User <|-- Admin
+User <|-- Colab
+User <|-- Entreg
+
+rectangle "SGEE - Sistema de Gestão de Estoque e Entregas" {
+    
+    usecase "UC-16 - Autenticar no Sistema (Login)" as UC16
+    
+    ' Casos de Uso Base
+    usecase "UC-01 - Fazer levantamento de entradas e saídas" as UC01
+    usecase "UC-02 - Fazer levantamento de custos e lucros" as UC02
+    usecase "UC-03 - Emitir nota fiscal (Admin)" as UC03
+    
+    usecase "UC-04 - Fazer contagem de produtos" as UC04
+    usecase "UC-05 - Registrar entrada de produtos" as UC05
+    usecase "UC-06 - Registrar saída de produtos" as UC06
+    usecase "UC-07 - Emitir nota de compra" as UC07
+    usecase "UC-08 - Emitir nota fiscal de venda" as UC08
+    usecase "UC-09 - Agendar entregas" as UC09
+    
+    usecase "UC-10 - Dar baixa em entregas em aberto" as UC10
+    usecase "UC-11 - Enviar comprovantes" as UC11
+    
+    ' Casos de Uso Modulares (Includes e Extends)
+    usecase "UC-12 - Validar disponibilidade em estoque" as UC12
+    usecase "UC-13 - Calcular impostos" as UC13
+    usecase "UC-14 - Emitir alerta de estoque baixo" as UC14
+    usecase "UC-15 - Registrar devolução de mercadoria" as UC15
+
+    ' Obrigatoriedade de Login (Includes nos fluxos de entrada para evitar poluição visual)
+    UC01 ..> UC16 : <<include>>
+    UC04 ..> UC16 : <<include>>
+    UC10 ..> UC16 : <<include>>
+
+    ' Relacionamentos Include (Obrigatórios)
+    UC06 ..> UC12 : <<include>>
+    UC08 ..> UC13 : <<include>>
+    UC03 ..> UC13 : <<include>>
+    
+    ' Relacionamentos Extend (Condicionais)
+    UC14 .up.> UC06 : <<extend>>
+    UC15 .up.> UC10 : <<extend>>
+}
+
+' Associação do Ator Pai
+User --> UC16
+
+' Associações dos Atores Filhos
+Admin --> UC01
+Admin --> UC02
+Admin --> UC03
+
+Colab --> UC04
+Colab --> UC05
+Colab --> UC06
+Colab --> UC07
+Colab --> UC08
+Colab --> UC09
+
+Entreg --> UC10
+Entreg --> UC11
+
+@enduml

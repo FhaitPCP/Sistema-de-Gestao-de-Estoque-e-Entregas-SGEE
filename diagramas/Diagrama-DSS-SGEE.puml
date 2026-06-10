@@ -1,0 +1,78 @@
+@startuml
+autonumber
+
+actor "Colaborador" as Colab
+actor "Entregador" as Entreg
+participant ":Sistema (SGEE)" as Sistema
+
+== DSS 01: Registrar Saída de Produtos (UC-06) ==
+Colab -> Sistema: autenticar(credenciais)
+Sistema --> Colab: tokenAutenticado(status: SUCESSO)
+
+Colab -> Sistema: registrarSaida(idProduto, quantidade)
+note over Sistema: Sistema valida internamente a disponibilidade do estoque (UC-12)
+
+alt Estoque Suficiente
+    Sistema --> Colab: confirmacaoSaida(status: OK)
+else Estoque Atinge Limite Mínimo [Extensão UC-14]
+    Sistema --> Colab: confirmacaoSaidaComAlerta(status: OK, mensagem: "Estoque Baixo")
+else Estoque Insuficiente
+    Sistema --> Colab: erroOperacao(mensagem: "Saldo Insuficiente")
+end
+
+== DSS 02: Emitir Nota Fiscal de Venda (UC-08) ==
+Colab -> Sistema: solicitarEmissaoNF(idPedidoVenda)
+note over Sistema: Sistema executa o cálculo compulsório de impostos (UC-13)
+
+Sistema --> Colab: exibirPreviaNota(dadosCliente, valorTotal, impostosCalculados)
+Colab -> Sistema: confirmarEmissao()
+Sistema --> Colab: documentoFiscalEmitido(chaveAcesso, pdfNota)
+
+== DSS 03: Dar Baixa em Entregas em Aberto (UC-10) ==
+Entreg -> Sistema: consultarEntregasPendentes()
+Sistema --> Entreg: listaEntregas(idEntrega, destinatario, endereco)
+
+Entreg -> Sistema: atualizarStatusEntrega(idEntrega, status: "ENTREGUE", fotoComprovante)
+Sistema --> Entreg: confirmacaoBaixa(status: ATUALIZADO)
+
+== DSS 04: Registar Entrada de Produtos (UC-05) ==
+Colab -> Sistema: registarEntrada(idProduto, quantidade, idFornecedor, xmlNotaCompra)
+note over Sistema: Sistema processa a entrada e atualiza o saldo em base de dados SQL
+Sistema --> Colab: confirmacaoEntrada(status: SUCESSO, novoSaldoEstoque)
+
+== DSS 05: Agendar Entregas (UC-09) ==
+Colab -> Sistema: solicitarAgendamento(idPedidoVenda, idEntregador, dataPrevista)
+Sistema -> Sistema: verificarDisponibilidadeEntregador()
+alt Entregador Disponível
+    Sistema --> Colab: agendamentoConfirmado(codigoRastreamento)
+else Entregador Indisponível
+    Sistema --> Colab: erroAgendamento(mensagem: "Conflito de Horário")
+end
+
+== DSS 06: Fazer Levantamento de Entradas e Saídas (UC-01) ==
+Admin -> Sistema: gerarRelatorioMovimentacao(dataInicio, dataFim, idProduto[opcional])
+note over Sistema: Sistema agrega dados dos microserviços de Compras e Vendas
+Sistema --> Admin: exibirRelatorio(dadosAgregados, totalEntradas, totalSaidas)
+
+== DSS 07: Fazer Levantamento de Custos e Lucros (UC-02) ==
+Admin -> Sistema: solicitarDemonstrativoFinanceiro(mesReferencia, anoReferencia)
+note over Sistema: Sistema calcula a diferença entre o custo de aquisição e o valor de faturamento
+Sistema --> Admin: demonstrativoGerado(lucroBruto, lucroLiquido, custosOperacionais)
+
+== DSS 08: Fazer Contagem de Produtos / Auditoria (UC-04) ==
+Colab -> Sistema: registarContagemFisica(idProduto, quantidadeAuditada)
+Sistema -> Sistema: compararComSaldoSistema()
+alt Quantidade Coincide
+    Sistema --> Colab: auditoriaAprovada(status: OK)
+else Divergência de Saldo
+    Sistema --> Colab: alertaDivergencia(quantidadeEsperada, diferenca)
+    Colab -> Sistema: submeterAjusteDeEstoque(justificativa)
+    Sistema --> Colab: ajusteRegistado(status: PENDENTE_APROVACAO_ADMIN)
+end
+
+== DSS 09: Registar Devolução de Mercadoria [Extensão] (UC-15) ==
+Entreg -> Sistema: sinalizarDevolucao(idEntrega, motivoDevolucao, fotoComprovativa)
+note over Sistema: Fluxo de exceção acionado quando a entrega falha (ex: cliente ausente)
+Sistema -> Sistema: reverterStatusPedido(idPedido)
+Sistema --> Entreg: devolucaoRegistada(instrucoesRetornoArmazem)
+@enduml

@@ -1,0 +1,38 @@
+@startuml
+skinparam nodesep 120
+skinparam ranksep 100
+skinparam defaultTextAlignment center
+skinparam linetype polyline
+
+skinparam rectangle {
+    BackgroundColor White
+    BorderColor Black
+    RoundCorner 10
+}
+
+actor "Colaborador" as Colab
+rectangle "Front: Interface\n(Node.js)" as Front
+rectangle "Controller:\nFaturacaoController" as Controller
+rectangle "Service:\nFaturacaoService" as Service
+rectangle "Entidade:\nNotaFiscal" as Entidade
+rectangle "Repository:\nFaturacaoRepository" as Repository
+database "Base de Dados\n(SQL)" as DB
+queue "Broker:\nRabbitMQ" as Broker
+
+' Fluxo de Entrada (Horizontal Topo)
+Colab -right-> Front : "1: solicitarEmissao()\n14: exibirPDF()"
+Front -right-> Controller : "2: POST /notas\n13: HTTP 201 Created"
+
+' Ligação ao Centro (Vertical)
+Controller -down-> Service : "3: emitirNota(id)\n12: NotaFiscalDTO"
+
+' Orbita em torno do Service (Centro)
+Service -left-> Broker : "11: publicarEvento()"
+Service -right-> Entidade : "7: instanciar(pedido)\n8: calcularImpostos()"
+Service -down-> Repository : "4: buscarPedido()\n9: save(nota)"
+
+' Camada de Dados (Fundo)
+Repository -down-> DB : "5: SELECT\n10: INSERT"
+DB .up.> Repository : "6: retornar dados"
+
+@enduml
