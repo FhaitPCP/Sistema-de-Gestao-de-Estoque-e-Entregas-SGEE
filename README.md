@@ -140,3 +140,6 @@ A organização física dos diretórios respeita o isolamento lógico da arquite
 ├── .env                         # 🔑 Variáveis de ambiente da infraestrutura
 └── README.md                    # 📘 Documentação central do projeto
 ```
+## Diagramas
+**Diagrama de Classes**
+[/diagramas/Diagranama-CLASS-SGEE.png]
