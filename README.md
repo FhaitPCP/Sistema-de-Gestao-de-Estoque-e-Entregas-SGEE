@@ -142,4 +142,4 @@ A organização física dos diretórios respeita o isolamento lógico da arquite
 ```
 ## Diagramas
 **Diagrama de Classes**
-[/diagramas/Diagranama-CLASS-SGEE.png]
+[Diagrama de classes - SGEE](/diagramas/Diagranama-CLASS-SGEE.png)
