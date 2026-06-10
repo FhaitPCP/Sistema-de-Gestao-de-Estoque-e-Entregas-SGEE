@@ -111,17 +111,19 @@ RABBITMQ_DEFAULT_PASS=rabbit_pass
 JWT_SECRET=super_chave_secreta_para_geracao_de_tokens_jwt
 ```
 
-##Execução Local Completa com Docker Compose
+---
+
+## Execução Local Completa com Docker Compose
 Esta é a forma recomendada de subir o sistema inteiro de uma só vez.
 
 * Clone o repositório:
 git clone [https://github.com/seu-usuario/sgee.git](https://github.com/seu-usuario/sgee.git)]
 cd sgee
 
-##📂 Estrutura de Pastas
+## 📂 Estrutura de Pastas
 A organização física dos diretórios respeita o isolamento lógico da arquitetura de microsserviços:
 
-.
+```.
 ├── /frontend                    # 📁 Aplicação cliente (Node.js)
 │   ├── /src
 │   │   ├── /pages               # Telas de interface (Admin, Colaborador, Entregador)
@@ -136,3 +138,4 @@ A organização física dos diretórios respeita o isolamento lógico da arquite
 ├── docker-compose.yml           # 🐳 Arquivo de orquestração de contêineres e redes
 ├── .env                         # 🔑 Variáveis de ambiente da infraestrutura
 └── README.md                    # 📘 Documentação central do projeto
+```
