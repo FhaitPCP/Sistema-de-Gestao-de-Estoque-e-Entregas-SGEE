@@ -140,6 +140,47 @@ A organização física dos diretórios respeita o isolamento lógico da arquite
 ├── .env                         # 🔑 Variáveis de ambiente da infraestrutura
 └── README.md                    # 📘 Documentação central do projeto
 ```
+---
 ## Diagramas
-**Diagrama de Classes**
-[Diagrama de classes - SGEE](/diagramas/Diagranama-CLASS-SGEE.png)
+> <b>IMPORTANTE:<b>
+> 
+<table>
+  <tr>
+    <td width="800px">
+      <div align="justify">
+       Vale ressaltar que os diagramas de sequência e estado aqui mostrados (com exceção do geral), para boas práticas e não repetição, são apenas os dos processos e estados críticos do sistema 
+      </div>
+    </td>
+  </tr> 
+</table>
+### Diagrama de Casos de Uso
+![Diagrama de Casos de Uso - SGEE](/diagramas/Diagrama-CU-SGEE.png)
+
+### Diagrama de Sequência 
+![Diagrama de Sequência - SGEE](/diagramas/Diagrama-DSS-SGEE.png)
+
+### Diagramas de Sequência Internos
+![Diagrama de Sequência - Saída de produtos - SGEE](/diagramas/Diagrama-DSSIN-SGEE.png)
+
+![Diagrama de Sequência Internos- Emissão de nota Fiscal - SGEE](/diagramas/Diagrama-DSSIN2-SGEE.png)
+
+### Diagrama de Classes
+![Diagrama de classes - SGEE](/diagramas/Diagrma-CLASS-SGEE.png)
+
+### Diagrama de Implementação e arquitetura
+![Diagrama de Implementação e Arquitetura - SGEE](/diagramas/Diagrama-ARQ-SGEE.png)
+
+### Diagrama de Comunicação
+![Diagrama de Comunicação - SGEE](/diagramas/Diagrama-COM-NotaFiscal-SGEE.png)
+
+### Diagramas de estado
+![Diagrama de Estado - SGEE](/diagramas/Diagrama-STATE-Emissaodenota-NotaFiscal-SGEE.png)
+
+![Diagrama de Estado - SGEE](/diagramas/Diagrama-STATE-ReagendarEntrega-SGEE.png)
+
+### Diagramas Relacionais de bancos de dados
+![Diagrama de MER - SGEE](/diagramas/Diagrama-MER-Gateway.png)
+
+![Diagrama de MER - SGEE](/diagramas/Diagrama-MER-Faturamento.png)
+
+![Diagrama de MER - SGEE](/diagramas/Diagrama-MER-Estoque.png)
