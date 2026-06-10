@@ -1,0 +1,32 @@
+@startuml
+skinparam linetype ortho
+skinparam entity {
+    BackgroundColor White
+    BorderColor Black
+}
+
+entity "usuarios" as usuarios {
+  * id_usuario : UUID <<PK>>
+  --
+  * nome : VARCHAR(100)
+  * email : VARCHAR(100) <<UNIQUE>>
+  * senha_hash : VARCHAR(255)
+  * ativo : BOOLEAN
+  * data_criacao : TIMESTAMP
+}
+
+entity "permissoes" as permissoes {
+  * id_permissao : UUID <<PK>>
+  --
+  * nome_role : VARCHAR(50) <<UNIQUE>>
+}
+
+entity "usuarios_permissoes" as usuarios_permissoes {
+  * id_usuario : UUID <<FK>>
+  * id_permissao : UUID <<FK>>
+  --
+}
+
+usuarios ||--o{ usuarios_permissoes
+permissoes ||--o{ usuarios_permissoes
+@enduml

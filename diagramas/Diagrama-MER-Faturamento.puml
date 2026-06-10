@@ -1,0 +1,30 @@
+@startuml
+skinparam linetype ortho
+skinparam entity {
+    BackgroundColor White
+    BorderColor Black
+}
+
+entity "notas_fiscais" as notas_fiscais {
+  * id_nota : UUID <<PK>>
+  --
+  * chave_acesso : VARCHAR(44) <<UNIQUE>>
+  * data_emissao : TIMESTAMP
+  * valor_total : DECIMAL(12,2)
+  * total_impostos : DECIMAL(12,2)
+  * tipo_operacao : VARCHAR(20)
+  * status : VARCHAR(30)
+}
+
+entity "itens_nota" as itens_nota {
+  * id_item : UUID <<PK>>
+  --
+  * id_nota : UUID <<FK>>
+  * id_produto : UUID <<Externa>>
+  * quantidade : INT
+  * preco_unitario : DECIMAL(10,2)
+  * subtotal : DECIMAL(12,2)
+}
+
+notas_fiscais ||--|{ itens_nota : "composta por"
+@enduml

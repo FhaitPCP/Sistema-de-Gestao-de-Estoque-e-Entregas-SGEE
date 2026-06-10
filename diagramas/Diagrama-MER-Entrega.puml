@@ -1,0 +1,30 @@
+@startuml
+skinparam linetype ortho
+skinparam entity {
+    BackgroundColor White
+    BorderColor Black
+}
+
+entity "entregas" as entregas {
+  * id_entrega : UUID <<PK>>
+  --
+  * id_nota_fiscal : UUID <<Externa>>
+  * id_entregador : UUID <<Externa>>
+  * status : VARCHAR(30)
+  * endereco_destino : VARCHAR(255)
+  * data_agendada : TIMESTAMP
+  * data_atualizacao : TIMESTAMP
+}
+
+entity "comprovantes" as comprovantes {
+  * id_comprovante : UUID <<PK>>
+  --
+  * id_entrega : UUID <<FK>> <<UNIQUE>>
+  * url_imagem : VARCHAR(255)
+  * assinatura_digital : TEXT
+  * motivo_devolucao : VARCHAR(255)
+  * data_hora_registro : TIMESTAMP
+}
+
+entregas ||--o| comprovantes : "registrada com"
+@enduml

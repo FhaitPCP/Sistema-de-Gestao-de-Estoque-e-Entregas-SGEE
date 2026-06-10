@@ -1,0 +1,31 @@
+@startuml
+skinparam linetype ortho
+skinparam entity {
+    BackgroundColor White
+    BorderColor Black
+}
+
+entity "produtos" as produtos {
+  * id_produto : UUID <<PK>>
+  --
+  * nome : VARCHAR(150)
+  * descricao : TEXT
+  * quantidade_atual : INT
+  * quantidade_minima : INT
+  * preco_custo : DECIMAL(10,2)
+  * preco_venda : DECIMAL(10,2)
+}
+
+entity "movimentacoes" as movimentacoes {
+  * id_movimentacao : UUID <<PK>>
+  --
+  * id_produto : UUID <<FK>>
+  * tipo_movimentacao : VARCHAR(20)
+  * quantidade : INT
+  * data_hora : TIMESTAMP
+  * id_usuario_responsavel : UUID <<Externa>>
+  * justificativa : VARCHAR(255)
+}
+
+produtos ||--o{ movimentacoes : "possui histórico de"
+@enduml

@@ -45,7 +45,7 @@ MSFaturacao --> DBFaturacao : "JDBC / JPA"
 MSEntregas --> DBEntregas : "JDBC / JPA"
 
 ' Comunicação Inter-serviços (Assíncrona para evitar acoplamento)
-MSEstoque .right.> MSFaturacao
+MSEstoque .right.> MSFaturacao 
 MSFaturacao .right.> MSEntregas
 
 @enduml
