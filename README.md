@@ -174,7 +174,7 @@ A organização física dos diretórios respeita o isolamento lógico da arquite
 ![Diagrama de Comunicação - SGEE](/diagramas/Diagrama-COM-NotaFiscal-SGEE.png)
 
 ### Diagramas de estado
-![Diagrama de Estado - SGEE](/diagramas/Diagrama-STATE-Emissaodenota-NotaFiscal-SGEE.png)
+![Diagrama de Estado - SGEE](/diagramas/Diagrama-STATE-Emissaodenota.png)
 
 ![Diagrama de Estado - SGEE](/diagramas/Diagrama-STATE-ReagendarEntrega-SGEE.png)
 
