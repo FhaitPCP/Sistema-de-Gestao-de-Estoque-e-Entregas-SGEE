@@ -117,9 +117,10 @@ JWT_SECRET=super_chave_secreta_para_geracao_de_tokens_jwt
 Esta é a forma recomendada de subir o sistema inteiro de uma só vez.
 
 * Clone o repositório:
-git clone [https://github.com/seu-usuario/sgee.git](https://github.com/seu-usuario/sgee.git)]
+```
+git clone https://github.com/seu-usuario/Sistema-de-Gestao-de-Estoque-e-Entregas-SGEE.git
 cd sgee
-
+```
 ## 📂 Estrutura de Pastas
 A organização física dos diretórios respeita o isolamento lógico da arquitetura de microsserviços:
 
